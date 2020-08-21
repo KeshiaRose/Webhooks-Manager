@@ -84,7 +84,7 @@ app.get("/listResources/:type", async (req, res) => {
 });
 
 app.get("/getDomain", async (req, res) => {
-  res.send(`${process.env.HEROKU_APP_NAME}.glitch.me`);
+  res.send(`${process.env.HEROKU_APP_NAME}.herokuapp.com`);
 });
 
 app.get("/getSites", async (req, res) => {
