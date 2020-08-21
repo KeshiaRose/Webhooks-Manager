@@ -1,0 +1,34 @@
+{
+  "name": "Tableau Webhooks Manager",
+  "description": "An internal Tableau hackathon project for a Tableau webhooks manager.",
+  "website": "https://github.com/KeshiaRose/Webhooks-Manager",
+  "repository": "https://github.com/KeshiaRose/Webhooks-Manager",
+  "env": {
+    "HEROKU_APP_NAME": {
+      "description": "Make sure this matches the app name you entered above exactly."
+    },
+    "SERVER": {
+      "description": "Your Tableau Server/Online address. Example: https://www.myserver.com"
+    },
+    "VERSION": {
+      "description": "The Tableau REST API version for your Server.",
+      "value": "3.8"
+    },
+    "PAT_NAME": {
+      "description": "Your Personal Access Token Name."
+    },
+    "PAT_SECRET": {
+      "description": "Your Personal Access Token Secret."
+    },
+    "SITE_NAME": {
+      "description": "Your initial Tableau site content URL. Required if using Tableau Online",
+      "required": false
+    },
+    "TIMEZONE": {
+      "description": "Your preferred timezone location. https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
+      "value": "America/Los_Angeles",
+      "required": false
+    }
+  },
+  "addons": ["heroku-postgresql:hobby-dev"]
+}
