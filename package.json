@@ -1,0 +1,29 @@
+{
+  "name": "hello-express",
+  "version": "0.0.1",
+  "description": "Hackathon project for a Tableau webhooks manager.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^8.3.0",
+    "node-fetch": "^2.6.0",
+    "moment": "^2.27.0",
+    "moment-timezone": "^0.5.31",
+    "json-parse-better-errors": "^1.0.2"
+  },
+  "engines": {
+    "node": "12.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/hello-express"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
+}

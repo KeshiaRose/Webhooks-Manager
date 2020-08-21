@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Hackathon project for a Tableau webhooks manager.">
+    <title>Webhooks Manager</title>
+    <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="/templates.js"></script>
+    <script src="/script.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <p class="header">Tableau Webhooks Manager</p>
+      <div class="row">
+        <select class="siteSelect" id="sites" onchange="switchSite(this)"></select>
+      </div>
+      <div id="webhooksList">
+        <div class="webhook normal">Loading webhooks...</div>
+      </div>
+      <div class="row">
+        <button class="btn" onclick="newWebhook()">
+          + New Webhook
+        </button>
+      </div>
+    </div>
+    
+    
+    
+    
+    <div class="modalContainer" id="editWebhookModal">
+      <div class="modal">
+        <div class="modalHeader">
+          <span id="editModalTitle"></span>
+        </div>
+        <div class="modalBody" id="editWebhookModalBody"></div>
+      </div>
+    </div>
+    <div class="modalContainer" id="infoModal">
+      <div class="modal info">
+        <div class="modalBody" id="infoModalBody"></div>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    
+    <img src="https://sugar-uttermost-sulfur.glitch.me/counter.png?flag=testing" alt="" style="display:none;visibility:hidden;" aria-hidden="true">
+  </body>
+</html>
