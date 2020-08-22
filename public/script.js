@@ -5,7 +5,7 @@ refreshWebhooksList();
 async function switchSite(select) {
   const response = await fetch(`/switchSite/${select.value}`);
   let data = await response.json();
-  if (data.error) return toast("error", "Error switching sites");
+  if (data.error) return toast("error", "Error switching sites: " + JSON.stringify(data.error));
   toast("success","Switching sites...")
   setTimeout(function(){ location.reload() }, 2000);
 }
@@ -14,7 +14,6 @@ async function refreshWebhooksList() {
   const responseSites = await fetch("/getSites");
   let {id, sites} = await responseSites.json();
   sites.sort((a,b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
-  console.log(sites)
   sites = sites.map(site => `<option value="${site.contentUrl}" ${site.id === id ? "selected" : ""}>${site.name}</option>`).join("")
   $("#sites").html(sites);
   
@@ -127,7 +126,6 @@ async function updateWebhook(webhook) {
     "webhook-destination-http"
   ].url = `https://${domain}/event/${id}`;
   
-  console.log(webhook)
   const tableauResponse = await fetch(`/updateResource/webhook/${id}`, {
     method: "PUT",
     body: JSON.stringify(body)
@@ -212,7 +210,7 @@ async function toggleWebhook(webhookID, state) {
   });
   const tableauData = await tableauResponse.json();
   closeModal("infoModal");
-  if (tableauData.error) return toast("error", `Error when trying to ${state ? "enable" : "disable"} webhook.`);
+  if (tableauData.error) return toast("error", `Error when trying to ${state ? "enable" : "disable"} webhook. ${JSON.stringify(tableauData.error)}`);
   await refreshWebhooksList();
   return toast("success", `Successfully ${state ? "enabled" : "disabled"} webhook.`);
 }
@@ -343,7 +341,6 @@ async function editWebhook(webhookID) {
   const type = webhookTypes.find(
     type => type.name === Object.keys(webhook["webhook-source"])[0]
   );
-  console.log()
   const webhookTemplateSet = templates.find(t => t.id === webhook.templateid).templates;
   const webhookTemplate = webhookTemplateSet.find(t => t.eventType === type.name) ? webhookTemplateSet.find(t => t.eventType === type.name).template : webhookTemplateSet.find(t => t.eventType === "default").template
   const message = webhook.advancedmode
@@ -410,7 +407,6 @@ async function editWebhook(webhookID) {
         };
         let validInputs = valid(webhook);
         if (validInputs !== true) return (this.error = validInputs);
-        console.log("Sent", webhook)
         saveWebhook(webhook);
       },
       deleteWH: function() {
