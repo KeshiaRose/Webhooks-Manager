@@ -63,7 +63,7 @@ async function createWebhook(webhook) {
       "webhook-destination": {
         "webhook-destination-http": {
           method: "POST",
-          url: "https://cyber-snapdragon-shoulder.glitch.me/" //Just a placeholder
+          url: "https://www.tableau.com/" //Just a placeholder
         }
       },
       name,
@@ -551,7 +551,7 @@ function showModal(modalID) {
   $(`#${modalID}Body`).html(`
     <div class="center">
       <p>Loading please wait...</p>
-      <img class="spinner" style="margin: auto" src="https://cdn.glitch.com/f8d1b475-dfd8-4227-a4d2-71691694bbd5%2Fspinner.svg?v=1597706228557" />
+      <img class="spinner" style="margin: auto" src="/spinner.svg" />
     </div>
   `);
 }

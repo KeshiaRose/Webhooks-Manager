@@ -5,7 +5,7 @@
   "repository": "https://github.com/KeshiaRose/Webhooks-Manager",
   "env": {
     "HEROKU_APP_NAME": {
-      "description": "Make sure this matches the app name you entered above exactly."
+      "description": "Make sure this matches the app name you entered above EXACTLY."
     },
     "SERVER": {
       "description": "Your Tableau Server/Online address. Example: https://www.myserver.com"

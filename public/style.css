@@ -128,11 +128,11 @@ body {
 }
 
 .workbookIcon {
-  background-image: url("https://cdn.glitch.com/f8d1b475-dfd8-4227-a4d2-71691694bbd5%2Fworkbook.svg?v=1597686574046");
+  background-image: url("/workbook.svg");
 }
 
 .dataSourceIcon {
-  background-image: url("https://cdn.glitch.com/f8d1b475-dfd8-4227-a4d2-71691694bbd5%2Fdata_source.svg?v=1597686573979");
+  background-image: url("/data_source.svg");
 }
 
 .actions {
@@ -141,13 +141,13 @@ body {
   background-repeat: no-repeat;
   width: 19px;
   height: 19px;
-  background-image: url("https://cdn.glitch.com/f8d1b475-dfd8-4227-a4d2-71691694bbd5%2Factions_normal.svg?v=1597686853265");
+  background-image: url("/actions_normal.svg");
   cursor: pointer;
   position: relative;
 }
 
 .actions:hover {
-  background-image: url("https://cdn.glitch.com/f8d1b475-dfd8-4227-a4d2-71691694bbd5%2Factions_hover.svg?v=1597686853215");
+  background-image: url("/actions_hover.svg");
 }
 
 .modalContainer {
