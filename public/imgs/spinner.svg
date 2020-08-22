@@ -1,0 +1,18 @@
+
+<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    #tail { fill: url(#fade) }
+    #head { fill: rgb(97, 101, 112) }
+    stop { stop-color: rgb(97, 101, 112) }
+  </style>
+  <linearGradient id="fade" x2="50" y1="25" y2="25" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-opacity="0"/>
+    <stop offset=".15" stop-opacity=".04"/>
+    <stop offset=".3" stop-opacity=".16"/>
+    <stop offset=".45" stop-opacity=".36"/>
+    <stop offset=".61" stop-opacity=".64"/>
+    <stop offset=".76"/>
+  </linearGradient>
+  <path id="head" d="M0 25a25 25 0 1 0 50 0h-3.9a21.1 21.1 0 1 1-42.2 0" />
+  <path id="tail" d="M50 25a25 25 0 0 0-50 0h3.9a21.1 21.1 0 1 1 42.2 0" />
+</svg>
