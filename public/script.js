@@ -551,7 +551,7 @@ function showModal(modalID) {
   $(`#${modalID}Body`).html(`
     <div class="center">
       <p>Loading please wait...</p>
-      <img class="spinner" style="margin: auto" src="/spinner.svg" />
+      <img class="spinner" style="margin: auto" src="/imgs/spinner.svg" />
     </div>
   `);
 }

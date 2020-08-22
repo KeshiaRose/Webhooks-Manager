@@ -128,11 +128,11 @@ body {
 }
 
 .workbookIcon {
-  background-image: url("/workbook.svg");
+  background-image: url("/imgs/workbook.svg");
 }
 
 .dataSourceIcon {
-  background-image: url("/data_source.svg");
+  background-image: url("/imgs/data_source.svg");
 }
 
 .actions {
@@ -141,13 +141,13 @@ body {
   background-repeat: no-repeat;
   width: 19px;
   height: 19px;
-  background-image: url("/actions_normal.svg");
+  background-image: url("/imgs/actions_normal.svg");
   cursor: pointer;
   position: relative;
 }
 
 .actions:hover {
-  background-image: url("/actions_hover.svg");
+  background-image: url("/imgs/actions_hover.svg");
 }
 
 .modalContainer {
