@@ -89,12 +89,26 @@ app.get("/getDomain", async (req, res) => {
 
 app.get("/getSites", async (req, res) => {
   const sites = await tableau.getSites();
-  res.send({id: tableau.siteID, sites});
+  res.send({ id: tableau.siteID, sites });
 });
 
 app.get("/switchSite/:contentUrl?", async (req, res) => {
   const data = await tableau.switchSite(req.params.contentUrl || "");
   await database.populateWebhooks();
+  res.send(data);
+});
+
+app.get("/getHistory/:id", async (req, res) => {
+  let data = await database.getHistory(req.params.id);
+  data = data.map(d => {
+    return {
+      ...d,
+      timestamp: moment
+        .utc(d.timestamp)
+        .tz(process.env.TIMEZONE || "UTC")
+        .format("L LTS")
+    };
+  });
   res.send(data);
 });
 
@@ -147,40 +161,52 @@ app.delete("/deleteWebhook/:id", async (req, res) => {
 });
 
 app.post("/event/:id", async (req, res) => {
-  console.log(`Webhook ${req.params.id} triggered!`);
-  
+  console.log(`Webhook ${req.params.id} received!`);
+
   const webhook = await database.getWebhook(req.params.id);
-  console.log(webhook)
 
   let body = {};
 
+  // Catch tests
   try {
     body = JSON.parse(req.body);
   } catch (err) {
+    const options = {
+      method: "POST",
+      body: JSON.stringify({ message: req.body }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+    const response = await fetch(webhook.routeurl, options);
+    database.logHistory({
+      id: req.params.id,
+      resourceID: "",
+      eventType: webhook.type,
+      responseCode: response.status
+    });
+    console.log(`Webhook ${req.params.id} sent!`);
+    res.status(response.status).send(response.statusText);
     console.log("Either something went wrong or that was a test!");
+    return;
   }
 
-  if (
-    Object.keys(body).length !== 0 &&
-    webhook.custommessageenabled &&
-    body.resource_luid
-  ) {
-    const type = webhookTypes.find(type => type.name === webhook.type);
-    const resource = await tableau.getResource(
-      type.resource,
-      body.resource_luid
-    );
-    const project = await tableau.getResourceByName(
-      "project",
-      resource.project.name
-    );
-    let image = "";
-    if (type.resource === "workbook") {
-      image = await tableau.getWorkbookImage(body.resource_luid);
-    }
+  const type = webhookTypes.find(type => type.name === webhook.type);
+  const resource = await tableau.getResource(type.resource, body.resource_luid);
+  const project = await tableau.getResourceByName("project", resource.project.name);
+
+  if (webhook.custommessageenabled && body.resource_luid) {
+    // let image = "";
+    // if (type.resource === "workbook") {
+    //   image = await tableau.getWorkbookImage(body.resource_luid);
+    // }
     const date = moment.utc(body.created_at).tz(process.env.TIMEZONE || "UTC");
-    const createdAt = moment.utc(resource.createdAt).tz(process.env.TIMEZONE || "UTC");
-    const updatedAt = moment.utc(resource.updatedAt).tz(process.env.TIMEZONE || "UTC");
+    const createdAt = moment
+      .utc(resource.createdAt)
+      .tz(process.env.TIMEZONE || "UTC");
+    const updatedAt = moment
+      .utc(resource.updatedAt)
+      .tz(process.env.TIMEZONE || "UTC");
 
     const templateStrings = {
       event_type: type.label || "",
@@ -193,7 +219,7 @@ app.post("/event/:id", async (req, res) => {
       resource_url: resource.webpageUrl || "",
       resource_created: createdAt.format("L LTS") || "",
       resource_updated: updatedAt.format("L LTS") || "",
-      workbook_image: image,
+      // workbook_image: image,
       site_id: tableau.siteID || "",
       timestamp: date.format("L LTS"),
       day: date.format("L"),
@@ -205,8 +231,6 @@ app.post("/event/:id", async (req, res) => {
       const re = new RegExp(`{{${template}}}`, "g");
       body = body.replace(re, templateStrings[template]);
     }
-  } else {
-    body = JSON.stringify({ message: req.body });
   }
 
   const options = {
@@ -217,8 +241,22 @@ app.post("/event/:id", async (req, res) => {
     }
   };
   
-  const response = await fetch(webhook.routeurl, options);
-  res.status(response.status).send(response.statusText);
+  const inProjects = webhook.filters.projects.includes(project.id);
+  const inResources = webhook.filters.resources.includes(body.resource_luid);
+
+  if (!webhook.filtersenabled || (inProjects || inResources)) {
+    const response = await fetch(webhook.routeurl, options);
+    database.logHistory({
+      id: req.params.id,
+      resourceID: (resource && resource.id) || "",
+      eventType: webhook.type,
+      responseCode: response.status
+    });
+    console.log(`Webhook ${req.params.id} sent!`);
+    res.status(response.status).send(response.statusText);
+  } else {
+    res.status(200).send();
+  }
 });
 
 const listener = app.listen(process.env.PORT, () => {
