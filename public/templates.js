@@ -129,7 +129,40 @@ const templates = [
         }
       }
     ]
-  }
+  },
+  {
+    id: 3,
+    name: "Google Hangouts",
+    templates: [
+      {
+        eventType: "default",
+        template: {
+          text:
+            "{{event_type}} was triggered on {{resource_type}}: {{resource_name}} at {{timestamp}}."
+        }
+      },
+      {
+        eventType: "webhook-source-event-datasource-refresh-failed",
+        template: {
+          text:
+            "Data source {{resource_name}} failed to refresh at {{timestamp}}."
+        }
+      },
+      {
+        eventType: "webhook-source-event-datasource-refresh-succeeded",
+        template: {
+          text:
+            "Data source {{resource_name}} was refreshed successfully at {{timestamp}}."
+        }
+      },
+      {
+        eventType: "webhook-source-event-workbook-updated",
+        template: {
+          text: "The workbook {{resource_name}} was updated at {{timestamp}}."
+        }
+      }
+    ]
+  }  
 ];
 
 const tab1Template = `
@@ -231,17 +264,35 @@ const tab3Template = `
 
   </div>
 `;
+const tab4Template = `
+  <div class="editModal" v-if="tab === 4">
+    <div class="row" style="height: 350px;overflow-y: auto;overflow-x: hidden;" v-if="id">
+      <table>
+        <tr>
+          <th>Time</th>
+          <th>Status</th>
+        </tr>
+        <tr v-for="h of history">
+          <td>{{h.timestamp}}</td>
+          <td v-bind:style="{color: h.responsecode.toString().substr(0,1) === '2' ? '#009768' : '#EB4454'}">{{h.responsecode}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+`;
 const modalTemplate = `
   <div class="editModal">
     <div class="tabRow">
       <div class="tab" v-bind:class="{ selected: tab === 1 }" v-on:click="tab = 1">SETTINGS</div>
       <div class="tab" v-bind:class="{ selected: tab === 2 }" v-on:click="tab = 2">FILTERS</div>
       <div class="tab" v-bind:class="{ selected: tab === 3 }" v-on:click="tab = 3">MESSAGE</div>
+      <div class="tab" v-bind:class="{ selected: tab === 4 }" v-on:click="tab = 4" v-if="id">HISTORY</div>
     </div> 
 
     ${tab1Template}
     ${tab2Template}
     ${tab3Template}
+    ${tab4Template}
 
     <div class="error">{{error}}</div>
     <div class="modalButtonsRow">

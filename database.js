@@ -41,7 +41,7 @@ module.exports.initializeTables = async () => {
   `;
 
   await pool.query(createTables);
-  await module.exports.populateWebhooks(siteID);
+  await module.exports.populateWebhooks();
 };
 
 module.exports.populateWebhooks = async () => {
@@ -154,3 +154,27 @@ module.exports.deleteWebhook = async webhookID => {
     return { error };
   }
 };
+
+module.exports.logHistory = async webhook => {
+  const query = `INSERT INTO history (webhookLUID, resourceLUID, eventType, responseCode)
+    VALUES($1, $2, $3, $4)`;
+  try {
+    const res = await pool.query(query, [webhook.id, webhook.resourceID, webhook.eventType, webhook.responseCode]);
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { error };
+  }
+};
+
+module.exports.getHistory = async webhookID => {
+  const query = `SELECT * FROM history WHERE webhookLUID = $1`;
+  try {
+    const res = await pool.query(query, [webhookID]);
+    return res.rows;
+  } catch (error) {
+    console.log(error);
+    return { error };
+  }
+};
+

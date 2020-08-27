@@ -219,7 +219,6 @@ async function listResources(resource) {
   const response = await fetch(`/listResources/${resource}`);
   const resources = await response.json();
   if (resources.error) return infoModal("error", resources.error);
-  resources.map(r => (r["checked"] = false)); // TODO pull checked from database
   return resources;
 }
 
@@ -276,13 +275,17 @@ async function newWebhook() {
     },
     methods: {
       save: function() {
+        const filters = {
+          projects: this.projects.filter(p => p.checked).map(p => p.id),
+          resources: this.resources.filter(r => r.checked).map(r => r.id)
+        }
         const webhook = {
           name: this.name,
           type: this.type,
           url: this.url,
           enabled: this.enabled,
           filtersEnabled: this.filtersEnabled,
-          filters: this.filters,
+          filters,
           customMessageEnabled: this.customMessageEnabled,
           message: this.message,
           advancedMode: this.advancedMode,
@@ -320,13 +323,10 @@ async function newWebhook() {
         this.projects = await listResources("project");
         let newResourceType = webhookTypes.find(type => type.name === this.type)
           .resource;
-        if (this.filtersEnabled && this.resourceType !== newResourceType)
+        if (this.filtersEnabled && (this.resourceType !== newResourceType || this.resources.length === 0))
           this.resources = await listResources(newResourceType);
         this.resourceType = newResourceType;
       }
-    },
-    created: async function() {
-      if (this.filtersEnabled) this.getFilterItems();
     }
   });
 }
@@ -334,8 +334,12 @@ async function newWebhook() {
 async function editWebhook(webhookID) {
   showModal("editWebhookModal");
   $("#editModalTitle").html("Edit Webhook");
-  const response = await fetch(`/getResource/webhook/${webhookID}`);
-  const webhook = await response.json();
+  const responseWebhook = await fetch(`/getResource/webhook/${webhookID}`);
+  const webhook = await responseWebhook.json();
+  console.log(webhook.filters)
+  
+  const responseHistory = await fetch(`/getHistory/${webhookID}`);
+  const history = await responseHistory.json();
 
   if (webhook.error) return infoModal("error", webhook.error);
   const type = webhookTypes.find(
@@ -370,7 +374,8 @@ async function editWebhook(webhookID) {
       filters: webhook.filters,
       message,
       error: "",
-      variablesTooltip: false
+      variablesTooltip: false,
+      history
     },
     watch: {
       type: async function() {
@@ -392,6 +397,10 @@ async function editWebhook(webhookID) {
     },
     methods: {
       save: function() {
+        const filters = {
+          projects: this.projects.filter(p => p.checked).map(p => p.id),
+          resources: this.resources.filter(r => r.checked).map(r => r.id)
+        }
         const webhook = {
           id: this.id,
           name: this.name,
@@ -399,12 +408,13 @@ async function editWebhook(webhookID) {
           url: this.url,
           enabled: this.enabled,
           filtersEnabled: this.filtersEnabled,
-          filters: this.filters,
+          filters,
           customMessageEnabled: this.customMessageEnabled,
           message: this.message,
           advancedMode: this.advancedMode,
           templateID: this.templateID
         };
+        console.log(this.filters)
         let validInputs = valid(webhook);
         if (validInputs !== true) return (this.error = validInputs);
         saveWebhook(webhook);
@@ -437,11 +447,14 @@ async function editWebhook(webhookID) {
         el.setSelectionRange(start, start);
       },
       getFilterItems: async function () {
-        this.projects = await listResources("project");
+        let projects = await listResources("project");
+        this.projects = projects.map(p => {return {...p, checked: this.filters && this.filters.projects.find(id => p.id === id) ? true : false}});
         let newResourceType = webhookTypes.find(type => type.name === this.type)
           .resource;
-        if (this.filtersEnabled && this.resourceType !== newResourceType)
-          this.resources = await listResources(newResourceType);
+        if (this.filtersEnabled && (this.resourceType !== newResourceType || this.resources.length === 0)) {
+          let resources = await listResources(newResourceType);
+          this.resources = resources.map(r => {return {...r, checked: this.filters && this.filters.resources.find(id => r.id === id) ? true : false}});
+        }
         this.resourceType = newResourceType;
       }
     },
